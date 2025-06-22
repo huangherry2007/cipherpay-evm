@@ -11,6 +11,95 @@ A privacy-preserving payment system built on Ethereum that enables private trans
 - 📊 Efficient state management
 - 🛡️ Advanced security measures
 
+## Zero-Knowledge Circuits
+
+The EVM implementation supports all CipherPay circuits for comprehensive privacy-preserving operations:
+
+### Core Circuits
+
+#### Transfer Circuit (`verifier-transfer.json`)
+- **Purpose**: Verifies private transfers between users
+- **Smart Contract**: `TransferVerifier.sol`
+- **Inputs**: Input notes, output notes, recipient, amount, fee
+- **Outputs**: Proof validity, new commitments, nullifiers
+
+#### Merkle Circuit (`verifier-merkle.json`)
+- **Purpose**: Verifies Merkle tree membership proofs
+- **Smart Contract**: `MerkleVerifier.sol`
+- **Inputs**: Leaf commitment, Merkle path, root
+- **Outputs**: Proof validity
+
+#### Nullifier Circuit (`verifier-nullifier.json`)
+- **Purpose**: Generates and verifies nullifiers for spent notes
+- **Smart Contract**: `NullifierVerifier.sol`
+- **Inputs**: Note commitment, secret
+- **Outputs**: Nullifier hash
+
+### Specialized Circuits
+
+#### ZK Stream Circuit (`verifier-zkStream.json`)
+- **Purpose**: Verifies streaming payments with time-based release
+- **Smart Contract**: `StreamVerifier.sol`
+- **Inputs**: Commitment, recipient, start/end times, current time, amount
+- **Outputs**: Stream validity, release amount
+
+#### ZK Split Circuit (`verifier-zkSplit.json`)
+- **Purpose**: Verifies payment splitting among multiple recipients
+- **Smart Contract**: `SplitVerifier.sol`
+- **Inputs**: Input note, output notes, total amount
+- **Outputs**: Split validity, individual amounts
+
+#### ZK Condition Circuit (`verifier-zkCondition.json`)
+- **Purpose**: Verifies conditional payments with various condition types
+- **Smart Contract**: `ConditionVerifier.sol`
+- **Inputs**: Commitment, condition type, condition data, recipient, amount
+- **Outputs**: Condition validity, payment eligibility
+
+### Utility Circuits
+
+#### Audit Proof Circuit (`verifier-audit_proof.json`)
+- **Purpose**: Generates audit proofs for compliance
+- **Smart Contract**: `AuditVerifier.sol`
+- **Inputs**: Notes, view key, total amount, timestamp
+- **Outputs**: Audit proof validity
+
+#### Withdraw Circuit (`verifier-withdraw.json`)
+- **Purpose**: Verifies withdrawals from private to public addresses
+- **Smart Contract**: `WithdrawVerifier.sol`
+- **Inputs**: Input notes, recipient, amount, fee
+- **Outputs**: Withdrawal validity, public transfer
+
+### Circuit Integration
+
+All circuits are integrated into the smart contracts using the following pattern:
+
+```solidity
+// Example: Transfer verification
+contract TransferVerifier {
+    function verifyTransfer(
+        uint[2] memory a,
+        uint[2][2] memory b,
+        uint[2] memory c,
+        uint[8] memory input
+    ) public view returns (bool) {
+        // Verify the zero-knowledge proof
+        return verifier.verifyProof(a, b, c, input);
+    }
+}
+```
+
+### Circuit Files Location
+
+Circuit verification keys are stored in `src/zk/circuits/`:
+- `verifier-transfer.json`
+- `verifier-merkle.json`
+- `verifier-nullifier.json`
+- `verifier-zkStream.json`
+- `verifier-zkSplit.json`
+- `verifier-zkCondition.json`
+- `verifier-audit_proof.json`
+- `verifier-withdraw.json`
+
 ## Prerequisites
 
 - Node.js (v16 or higher)
